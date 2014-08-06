@@ -131,6 +131,7 @@
                         *  find all links with image only else if (do not autolightbox textlinks) then
                         */
                         foreach($html->find('a[href*=jpg$] img, a[href*=gif$] img, a[href*=png$] img, a[href*=jpeg$] img, a[href*=bmp$] img') as $e) {
+                        	
                             /**
                             * Generate HTML5 yes/no
                             */
@@ -187,6 +188,15 @@
                                     $e->parent()->title = null;
                                     break;
                                 default:
+									if ($lightboxPlusOptions['use_caption_title']) {
+                                        if ( $e->parent()->find('img[src*=jpg$], img[src*=gif$], img[src*=png$], img[src*=jpeg$], img[src*=bmp$]') && ('wp-caption-text' == $e->parent()->next_sibling()->class) ) {
+                                        	 $e->title = $e->parent()->next_sibling()->innertext;
+											
+										} elseif ( $e->parent()->find('img[src*=jpg$], img[src*=gif$], img[src*=png$], img[src*=jpeg$], img[src*=bmp$]') && ('gallery-caption' == $e->parent()->next_sibling()->class) ) {
+											
+                                        	 $e->title = $e->parent()->next_sibling()->innertext; 
+										}	
+                                    }
                                     if (!$e->parent()->title) {
                                         if ($e->title) {
                                             $e->parent()->title = $e->title;
@@ -195,13 +205,7 @@
                                             $e->parent()->title = $postGroupTitle;
                                         }
                                     }
-                                    if ($lightboxPlusOptions['use_caption_title']) {
-                                        //if ($e->parent()->next_sibling()->innertext) { $e->parent()->title = $e->parent()->next_sibling()->innertext; }
-                                        //if ($e->parent()->next_sibling()->innertext) { $e->title = $e->parent()->next_sibling()->innertext; }
-
-                                        if ($e->find('img[src*=jpg$], img[src*=gif$], img[src*=png$], img[src*=jpeg$], img[src*=bmp$]') && $e->next_sibling()->class = 'wp-caption-text') { $e->title = $e->next_sibling()->innertext; }
-                                        elseif ($e->find('img[src*=jpg$], img[src*=gif$], img[src*=png$], img[src*=jpeg$], img[src*=bmp$]') && $e->parent()->next_sibling()->class = 'gallery-caption') { $e->title = $e->parent()->next_sibling()->innertext; }
-                                    }
+                                    
                                     break;
                             }
                         }
